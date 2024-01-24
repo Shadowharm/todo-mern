@@ -1,0 +1,60 @@
+import UserModel from "../models/user.model.js";
+import bcrypt from "bcrypt";
+import {v4 as uuidv4} from "uuid";
+import roleService from "./role.service.js";
+
+class UserService {
+    async signup (email, password) {
+
+        await UserModel.deleteMany()
+
+        const candidate = await UserModel.findOne({email})
+        if (candidate) {
+            throw new Error(`Пользователь с почтовым адресом ${email} уже существует`)
+        }
+
+        const hashPassword = await bcrypt.hash(password, 3);
+        const activationLink = uuidv4();
+
+        let userRole = await roleService.getByCode("user")
+        if (!userRole) {
+            userRole = await roleService.create()
+        }
+
+        return UserModel.create({email, password: hashPassword, activationLink, roles: [userRole.code]}); 
+    }
+
+    async login(req, res, next) {
+        try {
+
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
+    async logout (req, res, next) {
+        try {
+
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
+    async activate (req, res, next) {
+        try {
+
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
+    async refresh (req, res, next) {
+        try {
+
+        } catch (e) {
+            console.error(e)
+        }
+    }
+}
+
+export default new UserService()
