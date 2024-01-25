@@ -1,7 +1,11 @@
-import userService from "../services/user.service.js";
-
+import userService from "../services/user.service";
+import {
+    Request,
+    Response,
+    NextFunction
+} from 'express'
 class UserController {
-    async signup (req, res, next) {
+    async signup (req: Request, res: Response, next: NextFunction) {
         try {
             const {email, password} = req.body;
             const userData = await userService.signup(email, password);
@@ -11,7 +15,7 @@ class UserController {
         }
     }
 
-    async login(req, res, next) {
+    async login(req: Request, res: Response, next: NextFunction) {
         try {
 
         } catch (e) {
@@ -19,7 +23,7 @@ class UserController {
         }
     }
 
-    async logout (req, res, next) {
+    async logout (req: Request, res: Response, next: NextFunction) {
         try {
 
         } catch (e) {
@@ -27,7 +31,7 @@ class UserController {
         }
     }
 
-    async activate (req, res, next) {
+    async activate (req: Request, res: Response, next: NextFunction) {
         try {
 
         } catch (e) {
@@ -35,7 +39,7 @@ class UserController {
         }
     }
 
-    async refresh (req, res, next) {
+    async refresh (req: Request, res: Response, next: NextFunction) {
         try {
 
         } catch (e) {

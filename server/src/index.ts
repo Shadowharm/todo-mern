@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import 'dotenv/config'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
-import userRouter from "./routes/user.routes.js";
+import userRouter from "./routes/user.routes";
 
 const app = express();
 
@@ -21,7 +21,7 @@ app.use(cors({
 const PORT = process.env.PORT || 3001;
 const start = async () => {
     try {
-        await mongoose.connect(process.env.DB_URL)
+        await mongoose.connect(process.env.DB_URL as string)
         app.listen(PORT, () => console.log(`Server started on PORT = ${PORT}`))
     } catch (e) {
         console.error(e)
