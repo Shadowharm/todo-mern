@@ -1,51 +1,52 @@
-import userService from "../services/user.service";
+import userService from '../services/user.service'
 import {
-    Request,
-    Response,
-    NextFunction
+  Request,
+  Response,
+  NextFunction
 } from 'express'
 class UserController {
-    async signup (req: Request, res: Response, next: NextFunction) {
-        try {
-            const {email, password} = req.body;
-            const userData = await userService.signup(email, password);
-            return res.json(userData)
-        } catch (e) {
-            console.error(e)
-        }
+  async signup (req: Request, res: Response, next: NextFunction) {
+    try {
+      const { email, password } = req.body
+      const userData = await userService.signup(email, password)
+      return res.json(userData)
+    } catch (e) {
+      console.log(e)
+      return next(e)
     }
+  }
 
-    async login(req: Request, res: Response, next: NextFunction) {
-        try {
+  async login (req: Request, res: Response, next: NextFunction) {
+    try {
 
-        } catch (e) {
-            console.error(e)
-        }
+    } catch (e) {
+      console.error(e)
     }
+  }
 
-    async logout (req: Request, res: Response, next: NextFunction) {
-        try {
+  async logout (req: Request, res: Response, next: NextFunction) {
+    try {
 
-        } catch (e) {
-            console.error(e)
-        }
+    } catch (e) {
+      console.error(e)
     }
+  }
 
-    async activate (req: Request, res: Response, next: NextFunction) {
-        try {
+  async activate (req: Request, res: Response, next: NextFunction) {
+    try {
 
-        } catch (e) {
-            console.error(e)
-        }
+    } catch (e) {
+      console.error(e)
     }
+  }
 
-    async refresh (req: Request, res: Response, next: NextFunction) {
-        try {
+  async refresh (req: Request, res: Response, next: NextFunction) {
+    try {
 
-        } catch (e) {
-            console.error(e)
-        }
+    } catch (e) {
+      console.error(e)
     }
+  }
 }
 
 export default new UserController()
