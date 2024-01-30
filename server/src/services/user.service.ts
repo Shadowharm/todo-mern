@@ -8,7 +8,7 @@ class UserService {
   async signup (email: string, password: string) {
     const candidate = await UserModel.findOne({ email })
     if (candidate) {
-      throw ApiError.BadRequest(`Пользователь с почтовым адресом ${email} уже существует`, { email: 'Почта не уникальна' })
+      throw ApiError.BadRequest(`Пользователь с почтовым адресом ${email} уже существует`)
     }
 
     const hashPassword = await bcrypt.hash(password, 3)
@@ -18,8 +18,7 @@ class UserService {
     if (!userRole) {
       userRole = await roleService.create()
     }
-
-    return UserModel.create({ email, password: hashPassword, activationLink, roles: [userRole.code] })
+    return UserModel.create({ email, password: hashPassword, activationLink, role: userRole.code })
   }
 
   // async login(req, res, next) {

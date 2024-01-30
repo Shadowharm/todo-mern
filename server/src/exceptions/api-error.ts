@@ -1,10 +1,11 @@
 import { StatusCodes } from 'http-status-codes'
+import { ValidationError } from 'express-validator'
 
 export default class ApiError extends Error {
   status
   errors
 
-  constructor (status: number, message: string, errors: Record<string, string> = {}) {
+  constructor (status: number, message: string, errors: ValidationError[] = []) {
     super(message)
     this.status = status
     this.errors = errors
@@ -18,7 +19,7 @@ export default class ApiError extends Error {
     return new ApiError(StatusCodes.FORBIDDEN, 'У вас нет прав для совершения действия')
   }
 
-  static BadRequest (message: string, errors: Record<string, string> = {}) {
+  static BadRequest (message: string, errors: ValidationError[] = []) {
     return new ApiError(StatusCodes.BAD_REQUEST, message, errors)
   }
 }

@@ -4,14 +4,19 @@ import {
   Response,
   NextFunction
 } from 'express'
+import { validationResult } from 'express-validator'
+import ApiError from '../exceptions/api-error'
 class UserController {
   async signup (req: Request, res: Response, next: NextFunction) {
     try {
+      const errors = validationResult(req)
+      if (!errors.isEmpty()) {
+        return next(ApiError.BadRequest('Ошибка при валидации', errors.array()))
+      }
       const { email, password } = req.body
       const userData = await userService.signup(email, password)
       return res.json(userData)
     } catch (e) {
-      console.log(e)
       return next(e)
     }
   }
