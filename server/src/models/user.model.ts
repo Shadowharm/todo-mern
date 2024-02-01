@@ -5,7 +5,7 @@ const UserModel = new Schema({
   password: { type: String, required: true },
   isActivated: { type: Boolean, default: false },
   activationLink: { type: String },
-  role: { type: String, ref: 'Role' }
+  role: { type: String, ref: 'Role', default: 'user' }
 })
 
 export default model('User', UserModel)

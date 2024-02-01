@@ -15,6 +15,7 @@ class UserController {
       }
       const { email, password } = req.body
       const userData = await userService.signup(email, password)
+      res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true })
       return res.json(userData)
     } catch (e) {
       return next(e)
@@ -33,15 +34,18 @@ class UserController {
     try {
 
     } catch (e) {
-      console.error(e)
+      return next(e)
     }
   }
 
   async activate (req: Request, res: Response, next: NextFunction) {
     try {
-
+      const activationLink = req.params.link
+      await userService.activate(activationLink)
+      // TODO работает редирект при   ошибке
+      return res.redirect(process.env.CLIENT_URL)
     } catch (e) {
-      console.error(e)
+      return next(e)
     }
   }
 
