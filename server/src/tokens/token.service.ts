@@ -1,12 +1,12 @@
 import jwt from 'jsonwebtoken'
 import { v4 as uuidv4 } from 'uuid'
 
-import TokenModel from '../models/token.model'
+import TokenModel from './token.model'
 
 const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'secret'
 class TokenService {
   generateTokens (payload) {
-    const accessToken = jwt.sign(payload, JWT_ACCESS_SECRET, { expiresIn: '1m' })
+    const accessToken = jwt.sign(payload, JWT_ACCESS_SECRET, { expiresIn: '2m' })
     const refreshToken = uuidv4()
     return {
       accessToken,

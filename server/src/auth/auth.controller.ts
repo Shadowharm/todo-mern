@@ -1,4 +1,4 @@
-import userService from '../services/user.service'
+import authService from './auth.service'
 import {
   Request,
   Response,
@@ -6,7 +6,7 @@ import {
 } from 'express'
 import { validationResult } from 'express-validator'
 import ApiError from '../exceptions/api-error'
-class UserController {
+class AuthController {
   async signup (req: Request, res: Response, next: NextFunction) {
     try {
       const errors = validationResult(req)
@@ -14,7 +14,7 @@ class UserController {
         return next(ApiError.BadRequest('Ошибка при валидации', errors.array()))
       }
       const { email, password } = req.body
-      const userData = await userService.signup(email, password)
+      const userData = await authService.signup(email, password)
       res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true })
       return res.json(userData)
     } catch (e) {
@@ -24,9 +24,12 @@ class UserController {
 
   async login (req: Request, res: Response, next: NextFunction) {
     try {
-
+      const { email, password } = req.body
+      const userData = await authService.login(email, password)
+      res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true })
+      return res.json(userData)
     } catch (e) {
-      console.error(e)
+      next(e)
     }
   }
 
@@ -41,8 +44,7 @@ class UserController {
   async activate (req: Request, res: Response, next: NextFunction) {
     try {
       const activationLink = req.params.link
-      await userService.activate(activationLink)
-      // TODO работает редирект при   ошибке
+      await authService.activate(activationLink)
       return res.redirect(process.env.CLIENT_URL)
     } catch (e) {
       return next(e)
@@ -58,4 +60,4 @@ class UserController {
   }
 }
 
-export default new UserController()
+export default new AuthController()

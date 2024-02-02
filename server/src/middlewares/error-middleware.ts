@@ -4,9 +4,12 @@ import { StatusCodes } from 'http-status-codes'
 
 
 export default function (err: ApiError | Error, req: Request, res: Response, next: NextFunction) {
+  // console.error(err)
   if (err instanceof ApiError) {
-    return res.status(err.status).json({ message: err.message, errors: err.errors })
+    res.status(err.status).json({ message: err.message, errors: err.errors })
+  } else {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Внутрення ошибка сервера' })
   }
-  return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Внутрення ошибка сервера' })
-
+  res.locals.error = err
+  next()
 }

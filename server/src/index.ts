@@ -3,9 +3,10 @@ import mongoose from 'mongoose'
 import 'dotenv/config'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
-import userRouter from './routes/user.routes'
 import errorMiddleware from './middlewares/error-middleware'
-import authMiddleware from './middlewares/auth-middleware'
+import authMiddleware from './auth/auth-middleware'
+import router from './routes'
+import logsMiddleware from './logs/logs.middleware'
 
 const app = express()
 
@@ -18,10 +19,12 @@ app.use(cors({
 
 app.use(authMiddleware)
 
-app.use('/api/user', userRouter)
+app.use('/api', router)
 
 
 app.use(errorMiddleware)
+
+app.use(logsMiddleware)
 
 
 const PORT = process.env.PORT || 3001

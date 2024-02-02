@@ -57,13 +57,6 @@
     "import/prefer-default-export": "off", // ESLint предпочитает экспорт по умолчанию импорт/предпочитает экспорт по умолчанию
     "no-unused-expressions": "error", //нет неиспользуемых выражений
     "no-param-reassign": "off", //без переназначения параметров
-    "prefer-destructuring": ["error", { // требуется деструктуризация массивов и/или объектов.
-      "array": true,
-      "object": true
-    }, {
-      "enforceForRenamedProperties": false
-    }
-    ],
     "brace-style": ["error", "1tbs", { "allowSingleLine": true }],
     "keyword-spacing": ["error", { "before": true }],
     "indent": ["error", 2],
