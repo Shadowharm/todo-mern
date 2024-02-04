@@ -2,45 +2,39 @@ import jwt from 'jsonwebtoken'
 import { v4 as uuidv4 } from 'uuid'
 
 import TokenModel from './token.model'
+import { User } from '../users/user.instance'
+import { AuthTokens } from './token.instance'
 
 const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'secret'
 class TokenService {
-  generateTokens (payload) {
-    const accessToken = jwt.sign(payload, JWT_ACCESS_SECRET, { expiresIn: '2m' })
-    const refreshToken = uuidv4()
+  generateTokens (user: User): AuthTokens {
     return {
-      accessToken,
-      refreshToken
+      accessToken: jwt.sign(user, JWT_ACCESS_SECRET, { expiresIn: '60m' }),
+      refreshToken: uuidv4()
     }
   }
 
-  validateAccessToken (token) {
+  validateAccessToken (token: string): User {
     try {
-      const userData = jwt.verify(token, JWT_ACCESS_SECRET)
-      return userData
+      return jwt.verify(token, JWT_ACCESS_SECRET)
     } catch (e) {
       return null
     }
   }
 
-  async saveToken (userId, refreshToken) {
-    const tokenData = await TokenModel.findOne({ user: userId })
-    if (tokenData) {
-      tokenData.refreshToken = refreshToken
-      return tokenData.save()
-    }
-    const token = await TokenModel.create({ user: userId, refreshToken })
-    return token
+  create (userId: string, refreshToken: string) {
+    return TokenModel.create({
+      user: userId,
+      refreshToken
+    })
   }
 
-  async removeToken (refreshToken) {
-    const tokenData = await TokenModel.deleteOne({ refreshToken })
-    return tokenData
+  removeToken (refreshToken: string) {
+    return TokenModel.deleteOne({ refreshToken })
   }
 
-  async findToken (refreshToken) {
-    const tokenData = await TokenModel.findOne({ refreshToken })
-    return tokenData
+  findToken (refreshToken: string) {
+    return TokenModel.findOne({ refreshToken })
   }
 }
 

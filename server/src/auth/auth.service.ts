@@ -1,35 +1,49 @@
-import UserModel from '../users/user.model'
 import bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
-import roleService from '../services/role.service'
+import roleService from '../roles/role.service'
 import ApiError from '../exceptions/api-error'
-import { UserDto } from '../users/user.dto'
+import { IUser, User } from '../users/user.instance'
 import tokenService from '../tokens/token.service'
+import usersService from '../users/users.service'
+import todosService from '../todos/todos.service'
+import { IRole } from '../roles/role.instance'
+import { ITodosToken } from '../todos/todo.instance'
+import { AuthTokens } from '../tokens/token.instance'
+import mailService from '../mail/mail.service'
 
 class AuthService {
-  async signup (email: string, password: string) {
-    const candidate = await UserModel.findOne({ email })
+  async signup (email: string, password: string): Promise<AuthTokens> {
+    const candidate: Pick<IUser, '_id'> = await usersService.exist({ email })
     if (candidate) {
       throw ApiError.BadRequest(`Пользователь с почтовым адресом ${email} уже существует`)
     }
 
-    const hashPassword = await bcrypt.hash(password, 3)
-    const activationLink = uuidv4()
+    const hashPassword: string = await bcrypt.hash(password, 3)
+    const activationLink: string = uuidv4()
 
-    let userRole = await roleService.getByCode('user')
-    if (!userRole) {
-      userRole = await roleService.create()
-    }
-    const user = await UserModel.create({ email, password: hashPassword, activationLink, role: userRole })
-    const userDto = new UserDto(user)
-    const tokens = tokenService.generateTokens({ ...userDto })
-    await tokenService.saveToken(userDto.id, tokens.refreshToken)
+    const userRole: IRole = await roleService.userRole()
+
+    const todosToken: ITodosToken = await todosService.createTodosToken()
+
+    const user: IUser = await usersService.create({
+      email,
+      password: hashPassword,
+      activationLink,
+      role: userRole._id,
+      todosToken: todosToken._id
+    })
+
+    await mailService.sendActivationMail(email, `${process.env.API_URL}/api/auth/activate/${activationLink}`)
+
+    const userDto: User = new User(user)
+    const tokens: AuthTokens = tokenService.generateTokens({ ...userDto, role: userRole })
+    await tokenService.create(userDto.id, tokens.refreshToken)
 
     return tokens
   }
 
-  async login (email, password) {
-    const user = await UserModel.findOne({ email })
+  async login (email: string, password: string) {
+    const user = await usersService.getOne({ email })
     if (!user) {
       throw ApiError.BadRequest('Пользователь с таким email не найден')
     }
@@ -40,10 +54,10 @@ class AuthService {
     if (!user.isActivated) {
       throw ApiError.BadRequest('Аккаунт не активирован')
     }
-    const userDto = new UserDto(user)
+    const userDto = new User(user)
     const tokens = tokenService.generateTokens({ ...userDto })
 
-    await tokenService.saveToken(userDto.id, tokens.refreshToken)
+    await tokenService.create(userDto.id, tokens.refreshToken)
     return tokens
   }
 
@@ -53,7 +67,7 @@ class AuthService {
   // }
   //
   async activate (activationLink) {
-    const user = await UserModel.findOne({ activationLink })
+    const user = await usersService.getOne({ activationLink })
     if (!user) {
       throw ApiError.BadRequest('Некорректная ссылка активации')
     }

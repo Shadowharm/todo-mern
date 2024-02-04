@@ -1,9 +1,10 @@
 import { Schema, model } from 'mongoose'
+import { IRole } from './role.instance'
 
-const RoleModel = new Schema({
-  code: { type: String, unique: true, default: 'user' },
-  title: { type: String, default: 'Пользователь' },
-  permissions: [{ type: String, ref: 'Permission' }]
+const RoleModel: Schema<IRole> = new Schema({
+  code: { type: String, unique: true, required: true },
+  title: { type: String, required: true },
+  permissions: { type: [String], default: [], required: false }
 })
 
-export default model('Role', RoleModel)
+export default model<IRole>('Role', RoleModel)

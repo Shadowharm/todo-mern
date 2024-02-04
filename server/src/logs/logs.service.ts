@@ -5,8 +5,9 @@ class LogsService {
     return LogModel.create({ path, statusCode, error })
   }
 
-  async getAll (params = {}) {
-    return LogModel.find()
+  async getAll (params) {
+    const condition = params.onlyErrors ? { 'error': { $ne: null } } : {}
+    return LogModel.find(condition)
   }
 }
 

@@ -3,11 +3,10 @@ import {
   Response,
   NextFunction
 } from 'express'
-import { validationResult } from 'express-validator'
-import ApiError from '../exceptions/api-error'
 import usersService from './users.service'
-class AuthController {
-  async getAll (req: Request, res: Response, next: NextFunction) {
+
+class UserController {
+  async getAll (req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       res.json(await usersService.getAll())
       next()
@@ -17,4 +16,4 @@ class AuthController {
   }
 }
 
-export default new AuthController()
+export default new UserController()
