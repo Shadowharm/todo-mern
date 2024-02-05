@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose'
 import { ITodosToken } from './todo.instance'
 
 
-const TodosTokenModel = new Schema<ITodosToken>({
+const TodosTokenModel: Schema<ITodosToken> = new Schema<ITodosToken>({
   token: { type: String, required: true }
 })
 
