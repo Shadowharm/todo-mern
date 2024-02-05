@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { ITodo } from './todo.instance'
 import TodosService from './todos.service'
-import { Result, ValidationError, validationResult } from 'express-validator'
+import { validationResult } from 'express-validator'
 import ApiError from '../exceptions/api-error'
 
 class TodosController {

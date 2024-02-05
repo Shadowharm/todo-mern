@@ -1,7 +1,6 @@
 import UserModel from './users/user.model'
 import roleService from './roles/role.service'
 import usersService from './users/users.service'
-import todosService from './todos/todos.service'
 import bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
 import { IRole } from './roles/role.instance'
@@ -15,13 +14,12 @@ export default async function () {
     const adminExists = await UserModel.exists({ role: adminRole._id })
     if (adminExists) { return }
     const hashPassword = await bcrypt.hash(ADMIN_PASSWORD, 3)
-    const todosToken = await todosService.createTodosToken()
     await usersService.create({
       email: ADMIN_EMAIL,
       password: hashPassword,
       activationLink: uuidv4(),
       role: adminRole._id,
-      todosToken: todosToken._id,
+      todosToken: uuidv4(),
       isActivated: true
     })
   } catch (e) {

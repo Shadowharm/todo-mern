@@ -7,7 +7,7 @@ const UserModel = new Schema<IUser>({
   isActivated: { type: Boolean, default: false },
   activationLink: { type: String, required: true },
   role: { type: Schema.Types.ObjectId, ref: 'Role', required: true },
-  todosToken: { type: Schema.Types.ObjectId, ref: 'TodosToken', required: true }
+  todosToken: { type: String, required: true }
 }, {
   timestamps: true
 })

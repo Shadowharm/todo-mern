@@ -1,9 +1,4 @@
-
 import { Document, Types } from 'mongoose'
-
-export interface ITodosToken extends Document {
-  token: string
-}
 
 export interface ITodo extends Document {
   title: string,

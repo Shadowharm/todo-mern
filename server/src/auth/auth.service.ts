@@ -5,14 +5,12 @@ import ApiError from '../exceptions/api-error'
 import { IUser, User } from '../users/user.instance'
 import tokenService from '../tokens/token.service'
 import usersService from '../users/users.service'
-import todosService from '../todos/todos.service'
 import { IRole } from '../roles/role.instance'
-import { ITodosToken } from '../todos/todo.instance'
 import { AuthTokens } from '../tokens/token.instance'
 import mailService from '../mail/mail.service'
 
 class AuthService {
-  async signup (email: string, password: string): Promise<AuthTokens> {
+  async signup ({ email, password, todosToken }: Pick<User, 'email' | 'password' | 'todosToken'>): Promise<AuthTokens> {
     const candidate: Pick<IUser, '_id'> = await usersService.exist({ email })
     if (candidate) {
       throw ApiError.BadRequest(`Пользователь с почтовым адресом ${email} уже существует`)
@@ -23,14 +21,12 @@ class AuthService {
 
     const userRole: IRole = await roleService.userRole()
 
-    const todosToken: ITodosToken = await todosService.createTodosToken()
-
     const user: IUser = await usersService.create({
       email,
       password: hashPassword,
       activationLink,
       role: userRole._id,
-      todosToken: todosToken._id
+      todosToken: todosToken ?? uuidv4()
     })
 
     await mailService.sendActivationMail(email, `${process.env.API_URL}/api/auth/activate/${activationLink}`)

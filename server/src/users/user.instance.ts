@@ -7,7 +7,7 @@ export interface IUser extends Document {
   isActivated: boolean;
   activationLink?: string;
   role: Types.ObjectId;
-  todosToken: Types.ObjectId;
+  todosToken: string;
 }
 
 export class User {
@@ -15,7 +15,7 @@ export class User {
   isActivated?: boolean
   activationLink: string
   role: Types.ObjectId | Role
-  todosToken: Types.ObjectId
+  todosToken: string
   password: string
   id?: string
 
