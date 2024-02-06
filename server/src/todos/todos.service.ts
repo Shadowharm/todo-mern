@@ -1,6 +1,5 @@
 import { ITodo, Todo } from './todo.instance'
 import TodoModel from './todo.model'
-import ApiError from '../exceptions/api-error'
 import { v4 as uuidv4 } from 'uuid'
 
 class TodosService {

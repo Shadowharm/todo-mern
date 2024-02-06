@@ -6,6 +6,8 @@ import {
 } from 'express'
 import { validationResult } from 'express-validator'
 import ApiError from '../exceptions/api-error'
+import { v4 as uuidv4 } from 'uuid'
+import tokenService from '../tokens/token.service'
 class AuthController {
   async signup (req: Request, res: Response, next: NextFunction) {
     try {
@@ -14,7 +16,8 @@ class AuthController {
         return next(ApiError.BadRequest('Ошибка при валидации', errors.array()))
       }
       const { email, password } = req.body
-      const userData = await authService.signup(email, password)
+      const { todosToken } = req.cookies
+      const userData = await authService.signup({ email, password, todosToken })
       res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true })
       return res.json(userData)
     } catch (e) {
@@ -35,7 +38,13 @@ class AuthController {
 
   async logout (req: Request, res: Response, next: NextFunction) {
     try {
-
+      const { refreshToken } = req.cookies
+      if (refreshToken) {
+        await tokenService.removeToken(refreshToken)
+      }
+      return res.status(200)
+        .clearCookie('refreshToken')
+        .cookie('todosToken', uuidv4())
     } catch (e) {
       return next(e)
     }
@@ -53,9 +62,15 @@ class AuthController {
 
   async refresh (req: Request, res: Response, next: NextFunction) {
     try {
-
+      const { user } = res.locals
+      const { refreshToken } = req.cookies
+      const tokens = await tokenService.refreshToken(refreshToken, user)
+      res.status(200)
+        .json(tokens)
+        .cookie('refreshToken', tokens.refreshToken)
+        .cookie('accessToken', tokens.accessToken)
     } catch (e) {
-      console.error(e)
+      return next(e)
     }
   }
 }

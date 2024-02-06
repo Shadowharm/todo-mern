@@ -2,7 +2,9 @@ import { NextFunction, Request, Response } from 'express'
 import ApiError from '../exceptions/api-error'
 import tokenService from '../tokens/token.service'
 
-
+const AccessRoutes = [
+  '/api/auth/refresh'
+]
 export default function (req: Request, res: Response, next: NextFunction) {
   try {
     const authorizationHeader = req.headers.authorization
@@ -12,7 +14,9 @@ export default function (req: Request, res: Response, next: NextFunction) {
     if (!accessToken) {
       return next(ApiError.UnauthorizedError())
     }
-    const userData = tokenService.validateAccessToken(accessToken)
+    const userData = tokenService.validateAccessToken(accessToken, {
+      ignoreExpiration: AccessRoutes.includes(req.path)
+    })
     if (!userData) {
       return next(ApiError.UnauthorizedError())
     }
