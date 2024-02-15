@@ -18,7 +18,8 @@ class TokenService {
 
   validateAccessToken (token: string, params): User | null {
     try {
-      return jwt.verify(token, JWT_ACCESS_SECRET, params)
+      const { exp: _, iat: __, ...user } = jwt.verify(token, JWT_ACCESS_SECRET, params)
+      return user
     } catch (e) {
       return null
     }
@@ -45,9 +46,9 @@ class TokenService {
       throw ApiError.BadRequest('Токена не существует')
     }
     if (user.id !== token.userId.toString()) {
-      throw ApiError.BadRequest('токен не принадлежит пользователю')
+      throw ApiError.BadRequest('Токен не принадлежит пользователю')
     }
-    const newTokens = this.generateTokens(user)
+    const newTokens = this.generateTokens({ ...user })
     token.refreshToken = newTokens.refreshToken
     await token.save()
     return newTokens

@@ -18,7 +18,6 @@ class AuthController {
       const { email, password } = req.body
       const { todosToken } = req.cookies
       const userData = await authService.signup({ email, password, todosToken })
-      res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true })
       return res.json(userData)
     } catch (e) {
       return next(e)
@@ -29,7 +28,6 @@ class AuthController {
     try {
       const { email, password } = req.body
       const userData = await authService.login(email, password)
-      res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true })
       return res.json(userData)
     } catch (e) {
       next(e)
@@ -42,9 +40,7 @@ class AuthController {
       if (refreshToken) {
         await tokenService.removeToken(refreshToken)
       }
-      return res.status(200)
-        .clearCookie('refreshToken')
-        .cookie('todosToken', uuidv4())
+      return res.status(200).cookie('todosToken', uuidv4())
     } catch (e) {
       return next(e)
     }
@@ -65,10 +61,7 @@ class AuthController {
       const { user } = res.locals
       const { refreshToken } = req.cookies
       const tokens = await tokenService.refreshToken(refreshToken, user)
-      res.status(200)
-        .json(tokens)
-        .cookie('refreshToken', tokens.refreshToken)
-        .cookie('accessToken', tokens.accessToken)
+      res.status(200).json(tokens)
     } catch (e) {
       return next(e)
     }

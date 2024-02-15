@@ -18,7 +18,7 @@ export default async function () {
       email: ADMIN_EMAIL,
       password: hashPassword,
       activationLink: uuidv4(),
-      role: adminRole._id,
+      role: adminRole.id,
       todosToken: uuidv4(),
       isActivated: true
     })

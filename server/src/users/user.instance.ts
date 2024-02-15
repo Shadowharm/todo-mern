@@ -20,13 +20,13 @@ export class User {
   id?: string
 
 
-  constructor ({ email, isActivated = false, role, todosToken, password, _id, activationLink }: IUser) {
+  constructor ({ email, isActivated = false, role, todosToken, password, id, activationLink }: IUser) {
     this.email = email
     this.isActivated = isActivated
     this.role = role
     this.todosToken = todosToken
     this.password = password
-    this.id = _id
+    this.id = id
     this.activationLink = activationLink
   }
 }

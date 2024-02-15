@@ -11,7 +11,7 @@ import mailService from '../mail/mail.service'
 
 class AuthService {
   async signup ({ email, password, todosToken }: Pick<User, 'email' | 'password' | 'todosToken'>): Promise<AuthTokens> {
-    const candidate: Pick<IUser, '_id'> = await usersService.exist({ email })
+    const candidate = await usersService.exist({ email })
     if (candidate) {
       throw ApiError.BadRequest(`Пользователь с почтовым адресом ${email} уже существует`)
     }
@@ -25,7 +25,7 @@ class AuthService {
       email,
       password: hashPassword,
       activationLink,
-      role: userRole._id,
+      role: userRole.id,
       todosToken: todosToken ?? uuidv4()
     })
 

@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import ApiError from '../exceptions/api-error'
 import tokenService from '../tokens/token.service'
+import { User } from '../users/user.instance'
 
 const AccessRoutes = [
   '/api/auth/refresh'

@@ -75,7 +75,9 @@
     }],
     "object-curly-spacing": ["error", "always"],
     "no-bitwise": ["error", { "allow": ["~"] }], // запрещает побитовые операторы.
-    "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }], // запрещает неиспользуемые переменные.
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_",
+      "varsIgnorePattern": "^_"
+    }], // запрещает неиспользуемые переменные.
     "max-len": ["error", { "code": 120 }], // обеспечивает максимальную длину строки.
     "object-curly-newline": ["error", {
       "ObjectExpression": { "multiline": true, "consistent": true },
